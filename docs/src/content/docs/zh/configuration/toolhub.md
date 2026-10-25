@@ -127,6 +127,30 @@ ToolHub 会合并 **ToolHub 页面配置的 MCP servers** 和兼容旧配置中�
 
 启用后，Agent 可以在执行任务时调用这些工具。搜索词、请求的 URL，以及提供的目标或上下文会发送给 Parallel。要移除此连接，请从 ToolHub 的 MCP Server 列表删除 `parallel-search`，保存设置并重新打开 Agent，使其加载更新后的配置。
 
+### deed.page 示例
+
+[deed.page](https://deed.page/docs) 是一个托管的 MCP 服务，可以把 HTML 或一个文件夹发布为公开 URL。它很适合放在 ToolHub 中：大多数任务用不到它，只有当 Agent 需要分享成果时才会加载发布、更新和删除工具。
+
+在 **设置 → ToolHub** 中，使用 **导入 JSON** 添加：
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "deed-page",
+      "transport": "streamable-http",
+      "url": "https://deed.page/mcp"
+    }
+  ]
+}
+```
+
+将 **API key**、**API key env** 和 **Headers** 留空。deed.page 无需账号：第一次调用 `publish_site` 会返回站点 URL 和一个 owner token；之后对同一站点调用 `update_site` 或 `delete_site` 时，Agent 需要把该 token 作为 `token` 参数传入，因此请把 token 保存在 Agent 之后还能读取的位置。保存设置后从 CCR 重新打开 Agent。
+
+可以这样试：“为这个仓库生成一页 HTML 摘要，并用 deed.page 发布。” ToolHub 会解析出 `publish_site`，再通过 `tool_hub.invoke` 调用。
+
+发布的内容都是公开的，Agent 选择发布的文件会发送给 deed.page。要移除此连接，请从 ToolHub 的 MCP Server 列表删除 `deed-page`，保存设置并重新打开 Agent。
+
 ## JSON 示例
 
 桌面 App 的 SQLite 配置是当前生效来源，建议优先通过 UI 修改。下面字段适用于备份、迁移或排查时理解 ToolHub 配置结构：

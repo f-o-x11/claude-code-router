@@ -127,6 +127,30 @@ Ask the agent to find a public page and read it. ToolHub discovers the server's 
 
 Once enabled, the agent can call these tools during its work. Queries, requested URLs, and any supplied objectives or context are sent to Parallel. To remove this connection, delete `parallel-search` from ToolHub's MCP servers, save settings, and reopen the agent so it loads the updated configuration.
 
+### deed.page example
+
+[deed.page](https://deed.page/docs) is a hosted MCP server that publishes HTML or a folder of files to a public URL. It fits ToolHub well because most tasks never need it: the publish, update, and delete tools load only when the agent has something to share.
+
+In **Settings → ToolHub**, use **Import JSON** to add it:
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "deed-page",
+      "transport": "streamable-http",
+      "url": "https://deed.page/mcp"
+    }
+  ]
+}
+```
+
+Leave **API key**, **API key env**, and **Headers** empty. deed.page needs no account: the first `publish_site` call returns the site URL and an owner token, and the agent passes that token as the `token` argument when it later calls `update_site` or `delete_site` on the same site, so keep the token somewhere the agent can read it again. Save settings and reopen the agent from CCR.
+
+Try: "Build a one-page HTML summary of this repo and publish it with deed.page." ToolHub resolves `publish_site` and runs it through `tool_hub.invoke`.
+
+Everything published is public, and the files the agent chooses to publish are sent to deed.page. To remove the connection, delete `deed-page` from ToolHub's MCP servers, save settings, and reopen the agent.
+
 ## JSON example
 
 The desktop app's SQLite config is the effective source, so prefer editing through the UI. The fields below are useful for backups, migration, or troubleshooting:
